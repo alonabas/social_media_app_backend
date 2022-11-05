@@ -1,4 +1,5 @@
 import { Context, ErrorOutputType, PostType } from "../../types/Types";
+import { AUTH_ERROR_CODE, POST_ERROR_CODE } from "../../utils/constants";
 
 
 interface PostInputType {
@@ -26,7 +27,7 @@ export const postResolvers = {
     ): Promise<PostOutputType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -34,7 +35,7 @@ export const postResolvers = {
 
         if (!title || !content) {
             return {
-                errors: [{message: 'You should provide title and content of the post'}],
+                errors: [{message: 'You should provide title and content of the post', code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -55,13 +56,13 @@ export const postResolvers = {
     ): Promise<PostOutputType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 post: undefined
             }
         }
         if (!postId) {
             return {
-                errors: [{message: 'Please provide Post ID you would like to change'}],
+                errors: [{message: 'Please provide Post ID you would like to change', code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -69,7 +70,7 @@ export const postResolvers = {
 
         if (!title && !content) {
             return {
-                errors: [{message: 'You should provide a new title or content of the post'}],
+                errors: [{message: 'You should provide a new title or content of the post', code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -77,13 +78,13 @@ export const postResolvers = {
 
         if (!postObj) {
             return {
-                errors: [{message: `Post with id ${postId} doesnt exist`}],
+                errors: [{message: `Post with id ${postId} doesnt exist`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
         if (+postObj.authorId !== +userId) {
             return {
-                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to edit it`}],
+                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to edit it`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -109,13 +110,13 @@ export const postResolvers = {
     ): Promise<PostOutputType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 post: undefined
             }
         }
         if (!postId) {
             return {
-                errors: [{message: 'Please provide Post ID you would like to delete'}],
+                errors: [{message: 'Please provide Post ID you would like to delete', code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -123,13 +124,13 @@ export const postResolvers = {
 
         if (!postObj) {
             return {
-                errors: [{message: `Post with id ${postId} doesnt exist`}],
+                errors: [{message: `Post with id ${postId} doesnt exist`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
         if (+postObj.authorId !== +userId) {
             return {
-                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to delete it`}],
+                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to delete it`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -151,13 +152,13 @@ export const postResolvers = {
     ): Promise<PostOutputType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 post: undefined
             }
         }
         if (!postId) {
             return {
-                errors: [{message: 'Please provide Post ID you would like to publish'}],
+                errors: [{message: 'Please provide Post ID you would like to publish', code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -165,13 +166,13 @@ export const postResolvers = {
 
         if (!postObj) {
             return {
-                errors: [{message: `Post with id ${postId} doesnt exist`}],
+                errors: [{message: `Post with id ${postId} doesnt exist`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
         if (+postObj.authorId !== +userId) {
             return {
-                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to publish it`}],
+                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to publish it`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -197,13 +198,13 @@ export const postResolvers = {
     ): Promise<PostOutputType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 post: undefined
             }
         }
         if (!postId) {
             return {
-                errors: [{message: 'Please provide Post ID you would like to unpublish'}],
+                errors: [{message: 'Please provide Post ID you would like to unpublish', code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
@@ -211,13 +212,13 @@ export const postResolvers = {
 
         if (!postObj) {
             return {
-                errors: [{message: `Post with id ${postId} doesnt exist`}],
+                errors: [{message: `Post with id ${postId} doesnt exist`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }
         if (+postObj.authorId !== +userId) {
             return {
-                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to unpublish it`}],
+                errors: [{message: `Your are not owner of the post ${postId}. You are not allowed to unpublish it`, code: POST_ERROR_CODE}],
                 post: undefined
             }
         }

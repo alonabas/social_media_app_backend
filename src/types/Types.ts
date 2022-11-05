@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 export interface ErrorOutputType {
     message: string,
+    code: number
 }
 
 export interface Context {

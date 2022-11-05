@@ -1,4 +1,5 @@
 import { Context, ErrorOutputType, PostType, ProfileType, UserType } from "../types/Types";
+import { AUTH_ERROR_CODE, SERVER_ERROR_CODE } from "../utils/constants";
 
 interface MePayloadType {
     errors: ErrorOutputType[],
@@ -30,14 +31,14 @@ export const Query = {
     ): Promise<MePayloadType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 user: undefined
             }
         }
         let userObj = await prisma.user.findUnique({ where: { id: Number(userId) } });
         if (!userObj) {
             return {
-                errors: [{ message: 'You should sign in first' }],
+                errors: [{ message: 'You should sign in first', code: AUTH_ERROR_CODE }],
                 user: undefined
             }
         }
@@ -53,7 +54,7 @@ export const Query = {
     ): Promise<ProfilePayloadType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 profile: undefined
             }
         }
@@ -61,7 +62,7 @@ export const Query = {
         let profileObj = await prisma.profile.findUnique({ where: { userId: Number(userToSearch) } });
         if (!profileObj) {
             return {
-                errors: [{ message: `User with id ${userToSearch} does not exists` }],
+                errors: [{ message: `User with id ${userToSearch} does not exists`, code: SERVER_ERROR_CODE }],
                 profile: undefined
             }
         }
@@ -78,7 +79,7 @@ export const Query = {
     ): Promise<PostsPayloadType> => {
         if (!userId) {
             return {
-                errors: [{message: 'You should sign in first'}],
+                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
                 posts: []
             }
         }

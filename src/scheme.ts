@@ -34,7 +34,8 @@ export const typeDefs = gql`
     }
 
     type UserError {
-        message: String!
+        message: String!,
+        code: Int!
     }
 
     type User {

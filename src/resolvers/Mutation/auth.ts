@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken";
 import validator from 'validator';
 import { Context, ErrorOutputType } from "../../types/Types";
+import { ILLEGAL_PASSWORD_ERR_CODE } from "../../utils/constants";
 
 interface AuthInputArgs {
     email: string,
@@ -34,14 +35,14 @@ export const authResolvers = {
         const { email, password } = auth;
         if (isNotValidAsNew(email, password)) {
             return {
-                errors: [{ message: 'Email or password are not valid, password should be at least 8 symbols with at least one number, one uppercase letter, one lowercase letter and one symbol' }],
+                errors: [{ message: 'Email or password are not valid, password should be at least 8 symbols with at least one number, one uppercase letter, one lowercase letter and one symbol', code: ILLEGAL_PASSWORD_ERR_CODE }],
                 token: undefined
             }
         }
         let userObj = await prisma.user.findUnique({ where: { email: email } });
         if (userObj) {
             return {
-                errors: [{ message: 'User already exists' }],
+                errors: [{ message: 'User already exists', code: ILLEGAL_PASSWORD_ERR_CODE }],
                 token: undefined
             }
         }
@@ -81,7 +82,7 @@ export const authResolvers = {
         let userObj = await prisma.user.findUnique({ where: { email: email } });
         if (!userObj) {
             return {
-                errors: [{ message: 'Email or password are incorrect' }],
+                errors: [{ message: 'Email or password are incorrect', code: ILLEGAL_PASSWORD_ERR_CODE }],
                 token: undefined
             }
         }
@@ -89,7 +90,7 @@ export const authResolvers = {
 
         if (!isMatch) {
             return {
-                errors: [{ message: 'Email or password are incorrect' }],
+                errors: [{ message: 'Email or password are incorrect', code: ILLEGAL_PASSWORD_ERR_CODE }],
                 token: undefined
             }
         }
