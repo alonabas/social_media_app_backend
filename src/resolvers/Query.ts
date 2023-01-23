@@ -66,9 +66,10 @@ export const Query = {
                 profile: undefined
             }
         }
+        const profile = {...profileObj, isMe: profileObj.id === Number(userId)};
         return {
             errors: [],
-            profile: profileObj as ProfileType
+            profile: profile as ProfileType
         }
 
     },

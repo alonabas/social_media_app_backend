@@ -13,3 +13,8 @@ JWT_PRIVATE_KEY="<Your jwt key>"
 ```
 
 Then run `npm install` after finished run `npm run dev`
+
+
+Use prisma to update/check postgresql DB:
+1. `npx prisma db push`
+2. `npx prisma studio`
