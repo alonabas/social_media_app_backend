@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 import { Context, ErrorOutputType, PostType, ProfileType, UserType } from "../types/Types";
 import { AUTH_ERROR_CODE, SERVER_ERROR_CODE } from "../utils/constants";
 
@@ -30,10 +31,14 @@ export const Query = {
         { prisma, userId }: Context
     ): Promise<MePayloadType> => {
         if (!userId) {
-            return {
-                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
-                user: undefined
-            }
+            throw new GraphQLError('You are not authenticated.', {
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  http: {
+                    status: 401,
+                  },
+                },
+              });
         }
         let userObj = await prisma.user.findUnique({ where: { id: Number(userId) } });
         if (!userObj) {
@@ -53,10 +58,14 @@ export const Query = {
         {userId, prisma}: Context
     ): Promise<ProfilePayloadType> => {
         if (!userId) {
-            return {
-                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
-                profile: undefined
-            }
+            throw new GraphQLError('You are not authenticated.', {
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  http: {
+                    status: 401,
+                  },
+                },
+              });
         }
 
         let profileObj = await prisma.profile.findUnique({ where: { userId: Number(userToSearch) } });
@@ -79,10 +88,14 @@ export const Query = {
         {userId, prisma}: Context
     ): Promise<PostsPayloadType> => {
         if (!userId) {
-            return {
-                errors: [{message: 'You should sign in first', code: AUTH_ERROR_CODE}],
-                posts: []
-            }
+            throw new GraphQLError('You are not authenticated.', {
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  http: {
+                    status: 401,
+                  },
+                },
+              });
         }
         const posts = await prisma.post.findMany({
             where: {
