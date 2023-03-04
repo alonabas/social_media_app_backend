@@ -68,6 +68,7 @@ export const typeDefs = gql`
         bio: String,
         user: User!,
         isMe: Boolean!,
+        posts(last: Int!): [Post!]!,
     }
 
     type PostOutput {

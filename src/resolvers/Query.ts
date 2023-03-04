@@ -105,9 +105,13 @@ export const Query = {
                 updatedAt: 'desc'
             }
         });
+        const postWithMe: Array<PostType> = posts.map(p => ({
+            ...p,
+            isMy: Number(userId) === p.authorId,
+        }))
         return {
             errors: [],
-            posts: posts as Array<PostType>
+            posts: postWithMe as Array<PostType>
         }
     }
 }

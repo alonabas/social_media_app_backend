@@ -46,7 +46,10 @@ export const postResolvers = {
         }});
         return {
             errors: [],
-            post: result
+            post: {
+                ...result,
+                isMy: true
+            }
         }
     },
     postUpdate: async (
@@ -100,7 +103,10 @@ export const postResolvers = {
         })
         return {
             errors: [],
-            post: result
+            post: {
+                ...result,
+                isMy: true
+            }
         }
     },
     postDelete: async (
@@ -141,7 +147,10 @@ export const postResolvers = {
         })
         return {
             errors: [],
-            post: result
+            post: {
+                ...result,
+                isMy: true
+            }
         }
 
     },
@@ -187,7 +196,10 @@ export const postResolvers = {
         })
         return {
             errors: [],
-            post: result
+            post: {
+                ...result,
+                isMy: true
+            }
         }
 
     },
@@ -233,7 +245,10 @@ export const postResolvers = {
         })
         return {
             errors: [],
-            post: result
+            post: {
+                ...result,
+                isMy: true
+            }
         }
 
     }

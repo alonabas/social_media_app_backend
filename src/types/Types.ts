@@ -32,8 +32,13 @@ export interface PostType {
   content?: string,
   published: boolean,
   authorId: number,
+  isMy: boolean
 }
 
 export interface ParentUserInput {
   userId: number
+}
+
+export interface LastCountInput {
+  last: number
 }
