@@ -11,6 +11,12 @@ interface UserTypeInput {
     userId: string
 }
 
+interface PostsListTypeInput {
+    userId?: string,
+    last: number
+
+}
+
 interface ProfilePayloadType {
     errors: ErrorOutputType[],
     profile?: ProfileType
@@ -84,7 +90,7 @@ export const Query = {
     },
     posts: async (
         _ : any,
-        __: any,
+        obj: PostsListTypeInput,
         {userId, prisma}: Context
     ): Promise<PostsPayloadType> => {
         if (!userId) {
@@ -97,13 +103,16 @@ export const Query = {
                 },
               });
         }
+        const {userId: postsFromUser, last} = obj
         const posts = await prisma.post.findMany({
             where: {
-                published: true
+                published: postsFromUser !== userId.toString() ? true : undefined,
+                authorId: postsFromUser ? Number(postsFromUser) : undefined
             },
             orderBy: {
                 updatedAt: 'desc'
-            }
+            },
+            take: last
         });
         const postWithMe: Array<PostType> = posts.map(p => ({
             ...p,

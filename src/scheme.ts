@@ -5,7 +5,7 @@ export const typeDefs = gql`
         hello: String!,
         me: UserError!,
         profile(userId: ID!): ProfileError!,
-        posts: PostsOutput
+        posts(userId: ID, last: Int): PostsOutput
     }
 
     type Mutation {
