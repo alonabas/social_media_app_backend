@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { Context, ErrorOutputType, PostType, ProfileType, UserType } from "../types/Types";
+import { Context, ErrorOutputType, LastCountInput, PostType, ProfileType, UserType } from "../types/Types";
 import { AUTH_ERROR_CODE, SERVER_ERROR_CODE } from "../utils/constants";
 
 interface MePayloadType {
@@ -27,6 +27,10 @@ interface PostsPayloadType  {
     posts: Array<PostType>
 }
 
+interface UsersListPayloadType {
+    errors: ErrorOutputType[],
+    users: UserType[],
+}
 
 
 export const Query = {
@@ -87,6 +91,32 @@ export const Query = {
             profile: profile as ProfileType
         }
 
+    },
+    users: async (
+        _ : any,
+        {last} : LastCountInput,
+        {userId, prisma}: Context
+    ): Promise<UsersListPayloadType> => {
+        if (!userId) {
+            throw new GraphQLError('You are not authenticated.', {
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  http: {
+                    status: 401,
+                  },
+                },
+            });
+        }
+        const users = await prisma.user.findMany({
+            orderBy: {
+                updatedAt: 'desc'
+            },
+            take: last
+        });
+        return {
+            errors: [],
+            users: users
+        }
     },
     posts: async (
         _ : any,
