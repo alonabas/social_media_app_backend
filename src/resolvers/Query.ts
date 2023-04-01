@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { Context, ErrorOutputType, LastCountInput, PostType, ProfileType, UserType } from "../types/Types";
+import { Context, ErrorOutputType, PaginationInput, PostType, ProfileType, UserType } from "../types/Types";
 import { AUTH_ERROR_CODE, SERVER_ERROR_CODE } from "../utils/constants";
 
 interface MePayloadType {
@@ -13,8 +13,8 @@ interface UserTypeInput {
 
 interface PostsListTypeInput {
     userId?: string,
-    last: number
-
+    take: number,
+    cursorId: number,
 }
 
 interface ProfilePayloadType {
@@ -24,12 +24,15 @@ interface ProfilePayloadType {
 
 interface PostsPayloadType  {
     errors: ErrorOutputType[],
-    posts: Array<PostType>
+    posts: Array<PostType>,
+    hasMore: boolean
+
 }
 
 interface UsersListPayloadType {
     errors: ErrorOutputType[],
     users: UserType[],
+    hasMore: boolean
 }
 
 
@@ -94,7 +97,7 @@ export const Query = {
     },
     users: async (
         _ : any,
-        {last} : LastCountInput,
+        {take, cursorId} : PaginationInput,
         {userId, prisma}: Context
     ): Promise<UsersListPayloadType> => {
         if (!userId) {
@@ -107,15 +110,19 @@ export const Query = {
                 },
             });
         }
+        const cursor = cursorId ? {id: cursorId} : undefined;
         const users = await prisma.user.findMany({
             orderBy: {
                 updatedAt: 'desc'
             },
-            take: last
+            cursor: cursor,
+            take: take + 1
         });
+        const hasMore = users.length > take
         return {
             errors: [],
-            users: users
+            users: hasMore ? users.slice(0, -1) : users,
+            hasMore,
         }
     },
     posts: async (
@@ -133,7 +140,8 @@ export const Query = {
                 },
               });
         }
-        const {userId: postsFromUser, last} = obj
+        const {userId: postsFromUser, take, cursorId} = obj
+        const cursor = cursorId ? {id: cursorId} : undefined;
         const posts = await prisma.post.findMany({
             where: {
                 published: postsFromUser !== userId.toString() ? true : undefined,
@@ -142,15 +150,19 @@ export const Query = {
             orderBy: {
                 updatedAt: 'desc'
             },
-            take: last
+            cursor,
+            take: take + 1,
         });
-        const postWithMe: Array<PostType> = posts.map(p => ({
+        const hasMore = posts.length > take
+
+        const postWithMe: Array<PostType> = (hasMore ? posts.slice(0, -1) : posts).map(p => ({
             ...p,
             isMy: Number(userId) === p.authorId,
         }))
         return {
             errors: [],
-            posts: postWithMe as Array<PostType>
+            posts: postWithMe as Array<PostType>,
+            hasMore
         }
     }
 }

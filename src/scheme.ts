@@ -5,8 +5,8 @@ export const typeDefs = gql`
         hello: String!,
         me: UserError!,
         profile(userId: ID!): ProfileError!,
-        posts(userId: ID, last: Int): PostsOutput!,
-        users(last: Int): UsersOutput!
+        posts(userId: ID, take: Int, cursorId: Int): PostsOutput!,
+        users(take: Int, cursorId: Int): UsersOutput!
     }
 
     type Mutation {
@@ -39,11 +39,16 @@ export const typeDefs = gql`
         code: Int!
     }
 
+    type PostsPaginated {
+        posts: [Post!]!,
+        hasMore: Boolean!
+    }
+
     type User {
         id: ID!,
         email: String!,
         name: String,
-        posts: [Post!]!
+        posts: PostsPaginated!
     }
 
     type Post {
@@ -69,7 +74,7 @@ export const typeDefs = gql`
         bio: String,
         user: User!,
         isMe: Boolean!,
-        posts(last: Int!): [Post!]!,
+        posts(take: Int!, cursorId: Int): PostsPaginated!,
     }
 
     type PostOutput {
@@ -78,11 +83,13 @@ export const typeDefs = gql`
     }
     type PostsOutput {
         posts: [Post!]!,
+        hasMore: Boolean!,
         errors: [UserError!]!
     }
 
     type UsersOutput {
         users: [User]!,
+        hasMore: Boolean!,
         errors: [UserError!]!
     }
 `

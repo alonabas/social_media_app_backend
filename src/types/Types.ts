@@ -39,6 +39,12 @@ export interface ParentUserInput {
   userId: number
 }
 
-export interface LastCountInput {
-  last: number
+export interface PaginationInput {
+  take: number,
+  cursorId: number,
+}
+
+export interface PostsResponseType {
+  posts?: Array<PostType>,
+  hasMore: boolean
 }

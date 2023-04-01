@@ -1,5 +1,5 @@
 
-import { Context, LastCountInput, ParentUserInput, PostType, UserType } from '../types/Types';
+import { Context, PaginationInput, ParentUserInput, PostsResponseType, PostType, UserType } from '../types/Types';
 
 
 export const Profile = {
@@ -11,9 +11,9 @@ export const Profile = {
         return await prisma.user.findUnique({where: {id: userIdFromProfile}}) as UserType
     },
     posts: async ({userId: userIdFromProfile}: ParentUserInput,
-        {last} : LastCountInput,
+        {cursorId, take} : PaginationInput,
         {prisma, userId}: Context
-    ): Promise<Array<PostType> | null> => {
+    ): Promise<PostsResponseType> => {
         const where: {authorId: number, published?: boolean} = {
             authorId : userIdFromProfile,
             published: true
@@ -21,14 +21,21 @@ export const Profile = {
         if (Number(userId) === userIdFromProfile ) {
             where.published = undefined
         }
+        const cursor = cursorId ? {id: cursorId} : undefined;
+
         const result = await prisma.post.findMany({
             where: where, 
-            take: last,
+            take: take + 1,
+            cursor: cursor,
             orderBy: [{updatedAt: 'desc'}]
         });
-        return result.map(r => ({
-            ...r, 
-            isMy: true,
-        }));
+        const hasMore = result.length > take
+        return {
+            posts: (hasMore ? result.slice(0, -1) : result).map(r => ({
+                ...r, 
+                isMy: true,
+            })),
+            hasMore,
+        }
     },
 }
